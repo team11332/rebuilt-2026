@@ -30,11 +30,11 @@ public class TunerConstants {
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
   private static final Slot0Configs steerGains =
       new Slot0Configs()
-          .withKP(100)
+          .withKP(0)
           .withKI(0)
-          .withKD(0.5)
-          .withKS(0.1)
-          .withKV(1.91)
+          .withKD(0)
+          .withKS(0)
+          .withKV(0)
           .withKA(0)
           .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
   // When using closed-loop control, the drive motor uses the control
@@ -69,6 +69,7 @@ public class TunerConstants {
   // cannot be null.
   // Some configs will be overwritten; check the `with*InitialConfigs()` API
   // documentation.
+
   private static final TalonFXConfiguration driveInitialConfigs = new TalonFXConfiguration();
   private static final TalonFXConfiguration steerInitialConfigs =
       new TalonFXConfiguration()
@@ -80,6 +81,7 @@ public class TunerConstants {
                   // stator current limit to help avoid brownouts without impacting performance.
                   .withStatorCurrentLimit(Amps.of(60))
                   .withStatorCurrentLimitEnable(true));
+
   private static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
   // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
   private static final Pigeon2Configuration pigeonConfigs = null;
@@ -135,7 +137,6 @@ public class TunerConstants {
               .withSpeedAt12Volts(kSpeedAt12Volts)
               .withDriveMotorType(kDriveMotorType)
               .withSteerMotorType(kSteerMotorType)
-              .withFeedbackSource(kSteerFeedbackType)
               .withDriveMotorInitialConfigs(driveInitialConfigs)
               .withSteerMotorInitialConfigs(steerInitialConfigs)
               .withEncoderInitialConfigs(encoderInitialConfigs)
@@ -152,8 +153,8 @@ public class TunerConstants {
   private static final boolean kFrontLeftSteerMotorInverted = true;
   private static final boolean kFrontLeftEncoderInverted = false;
 
-  private static final Distance kFrontLeftXPos = Meters.of(0.53/2);
-  private static final Distance kFrontLeftYPos = Meters.of(0.53/2);
+  private static final Distance kFrontLeftXPos = Meters.of(0.53 / 2);
+  private static final Distance kFrontLeftYPos = Meters.of(0.53 / 2);
 
   // Front Right
   private static final int kFrontRightDriveMotorId = 1;
@@ -163,8 +164,8 @@ public class TunerConstants {
   private static final boolean kFrontRightSteerMotorInverted = true;
   private static final boolean kFrontRightEncoderInverted = false;
 
-  private static final Distance kFrontRightXPos = Meters.of(0.53/2);
-  private static final Distance kFrontRightYPos = Meters.of(-0.53/2);
+  private static final Distance kFrontRightXPos = Meters.of(0.53 / 2);
+  private static final Distance kFrontRightYPos = Meters.of(-0.53 / 2);
 
   // Back Left
   private static final int kBackLeftDriveMotorId = 7;
@@ -174,8 +175,8 @@ public class TunerConstants {
   private static final boolean kBackLeftSteerMotorInverted = true;
   private static final boolean kBackLeftEncoderInverted = false;
 
-  private static final Distance kBackLeftXPos = Meters.of(-0.53/2);
-  private static final Distance kBackLeftYPos = Meters.of(0.53/2);
+  private static final Distance kBackLeftXPos = Meters.of(-0.53 / 2);
+  private static final Distance kBackLeftYPos = Meters.of(0.53 / 2);
 
   // Back Right
   private static final int kBackRightDriveMotorId = 5;
@@ -185,8 +186,8 @@ public class TunerConstants {
   private static final boolean kBackRightSteerMotorInverted = true;
   private static final boolean kBackRightEncoderInverted = false;
 
-  private static final Distance kBackRightXPos = Meters.of(-0.53/2);
-  private static final Distance kBackRightYPos = Meters.of(-0.53/2);
+  private static final Distance kBackRightXPos = Meters.of(-0.53 / 2);
+  private static final Distance kBackRightYPos = Meters.of(-0.53 / 2);
   public static final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       FrontLeft =

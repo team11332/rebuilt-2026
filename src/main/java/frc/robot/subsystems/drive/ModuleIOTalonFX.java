@@ -119,7 +119,7 @@ public class ModuleIOTalonFX implements ModuleIO {
     var turnConfig = new TalonFXConfiguration();
     turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     turnConfig.Slot0 = constants.SteerMotorGains;
-    turnConfig.Feedback.FeedbackRemoteSensorID = constants.EncoderId;
+    // turnConfig.Feedback.FeedbackRemoteSensorID = constants.EncoderId;
     // turnConfig.Feedback.FeedbackSensorSource =
     //     switch (constants.FeedbackSource) {
     //       case RemoteCANcoder -> FeedbackSensorSourceValue.RemoteCANcoder;
@@ -132,7 +132,6 @@ public class ModuleIOTalonFX implements ModuleIO {
     // https://docs.advantagekit.org/getting-started/template-projects/talonfx-swerve-template#custom-module-implementations");
     //     };
     turnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    turnConfig.Feedback.RotorToSensorRatio = 1;
     turnConfig.Feedback.SensorToMechanismRatio = constants.SteerMotorGearRatio;
     turnConfig.MotionMagic.MotionMagicCruiseVelocity = 100.0 / constants.SteerMotorGearRatio;
     turnConfig.MotionMagic.MotionMagicAcceleration =

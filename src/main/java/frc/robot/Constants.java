@@ -15,6 +15,42 @@ import edu.wpi.first.wpilibj.RobotBase;
  * (log replay from a file).
  */
 public final class Constants {
+  public static final class FuelConstants {
+    // Motor controller IDs for Fuel Mechanism motors
+    public static final int FOLLOWER_MOTOR_ID = 6;
+    public static final int INTAKE_LAUNCHER_MOTOR_ID = 5;
+    public static final int FEEDER_MOTOR_ID = 8;
+
+    // Current limit for fuel mechanism motors.
+    public static final int FEEDER_MOTOR_CURRENT_LIMIT = 60;
+
+    // Current limit and nominal voltage for fuel mechanism motors.
+    public static final int FOLLOWER_MOTOR_CURRENT_LIMIT = 60;
+    public static final int LAUNCHER_MOTOR_CURRENT_LIMIT = 60;
+
+    // Voltage values for various fuel operations. These values may need to be tuned
+    // based on exact robot construction.
+    // See the Software Guide for tuning information
+    public static final double INTAKING_FEEDER_VELOCITY = 1;
+    public static final double INTAKING_INTAKE_VELOCITY = 80;
+    public static final double LAUNCHING_FEEDER_VELOCITY = 1;
+    public static final double LAUNCHING_LAUNCHER_VELOCITY = 1;
+    public static final double SPIN_UP_FEEDER_VELOCITY = 1;
+    public static final double SPIN_UP_SECONDS = 1;
+  }
+
+  public static final class OperatorConstants {
+    // Port constants for driver and operator controllers. These should match the
+    // values in the Joystick tab of the Driver Station software
+    public static final int DRIVER_CONTROLLER_PORT = 0;
+    public static final int OPERATOR_CONTROLLER_PORT = 1;
+
+    // This value is multiplied by the joystick value when driving the robot to
+    // help avoid driving and turning too fast and being difficult to control
+    public static final double DRIVE_SCALING = .7;
+    public static final double ROTATION_SCALING = .8;
+  }
+
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 

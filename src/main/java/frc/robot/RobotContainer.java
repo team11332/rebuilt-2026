@@ -7,7 +7,9 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
+import static frc.robot.Constants.FuelConstants.*;
+import static frc.robot.Constants.OperatorConstants.*;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -18,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.CANFuelSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -36,14 +39,18 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
 
-  // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CANFuelSubsystem ballSubsystem = new CANFuelSubsystem();
+
+  // The driver's controller
+  private final CommandXboxController Controller =
+      new CommandXboxController(DRIVER_CONTROLLER_PORT);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    configureBindings();
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -99,8 +106,17 @@ public class RobotContainer {
         break;
     }
 
-    // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser = new LoggedDashboardChooser<>("Auto Routine");
+
+    /**
+     * Use this method to define your trigger->command mappings. Triggers can be created via the
+     * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
+     * predicate, or via the named factories in {@link
+     * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
+     * CommandXboxController Xbox}/ {@link
+     * edu.wpi.first.wpilibj2.command.button.CommandPS4Controller PS4} controllers or {@link
+     * edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
+     */
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -119,7 +135,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
-    configureButtonBindings();
+    configureBindings();
   }
 
   /**
@@ -128,31 +144,29 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {
+  private void configureBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -Controller.getLeftY(),
+            () -> -Controller.getLeftX(),
+            () -> -Controller.getRightX()));
 
     // Lock to 0° when A button is held
-    controller
-        .a()
+    Controller.a()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> -Controller.getLeftY(),
+                () -> -Controller.getLeftX(),
                 () -> Rotation2d.kZero));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    Controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
+    Controller.b()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -160,6 +174,30 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.k180deg)),
                     drive)
                 .ignoringDisable(true));
+    // While the left bumper on operator controller is held, intake Fuel
+    Controller.leftBumper()
+        .whileTrue(ballSubsystem.runEnd(() -> ballSubsystem.intake(), () -> ballSubsystem.stop()));
+    // While the right bumper on the operator controller is held, spin up for 1
+    // second, then launch fuel. When the button is released, stop.
+    Controller.rightBumper()
+        .whileTrue(
+            ballSubsystem
+                .spinUpCommand()
+                .withTimeout(SPIN_UP_SECONDS)
+                .andThen(ballSubsystem.launchCommand())
+                .finallyDo(() -> ballSubsystem.stop()));
+    // While the A button is held on the operator controller, eject fuel back out
+    // the intake
+    Controller.a()
+        .whileTrue(ballSubsystem.runEnd(() -> ballSubsystem.eject(), () -> ballSubsystem.stop()));
+
+    // Set the default command for the drive subsystem to the command provided by
+    // factory with the values provided by the joystick axes on the driver
+    // controller. The Y axis of the controller is inverted so that pushing the
+    // stick away from you (a negative value) drives the robot forwards (a positive
+    // value). The X-axis is also inverted so a positive value (stick to the right)
+    // results in clockwise rotation (front of the robot turning right). Both ax
+
   }
 
   /**

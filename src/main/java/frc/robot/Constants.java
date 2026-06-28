@@ -17,9 +17,9 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
   public static final class FuelConstants {
     // Motor controller IDs for Fuel Mechanism motors
-    public static final int FOLLOWER_MOTOR_ID = 6;
-    public static final int INTAKE_LAUNCHER_MOTOR_ID = 5;
-    public static final int FEEDER_MOTOR_ID = 8;
+    public static final int FOLLOWER_MOTOR_ID = 10;
+    public static final int INTAKE_LAUNCHER_MOTOR_ID = 9;
+    public static final int FEEDER_MOTOR_ID = 11;
 
     // Current limit for fuel mechanism motors.
     public static final int FEEDER_MOTOR_CURRENT_LIMIT = 60;

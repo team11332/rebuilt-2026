@@ -147,11 +147,11 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.k180deg)),
                     drive)
                 .ignoringDisable(true));
-                
+
     // While the left bumper on operator controller is held, intake Fuel
     Controller.leftBumper()
         .whileTrue(ballSubsystem.runEnd(() -> ballSubsystem.intake(), () -> ballSubsystem.stop()));
-        
+
     // While the right bumper on the operator controller is held, spin up for 1
     // second, then launch fuel. When the button is released, stop.
     Controller.rightBumper()
@@ -161,7 +161,7 @@ public class RobotContainer {
                 .withTimeout(SPIN_UP_SECONDS)
                 .andThen(ballSubsystem.launchCommand())
                 .finallyDo(() -> ballSubsystem.stop()));
-                
+
     // While the A button is held on the operator controller, eject fuel back out
     // the intake
     Controller.a()

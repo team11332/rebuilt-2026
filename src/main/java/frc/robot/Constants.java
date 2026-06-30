@@ -32,9 +32,9 @@ public final class Constants {
     // based on exact robot construction.
     // See the Software Guide for tuning information
     public static final double INTAKING_FEEDER_VELOCITY = 1;
-    public static final double INTAKING_INTAKE_VELOCITY = 80;
+    public static final double INTAKING_INTAKE_VELOCITY = 40;
     public static final double LAUNCHING_FEEDER_VELOCITY = 1;
-    public static final double LAUNCHING_LAUNCHER_VELOCITY = 1;
+    public static final double LAUNCHING_LAUNCHER_VELOCITY = 40;
     public static final double SPIN_UP_FEEDER_VELOCITY = 1;
     public static final double SPIN_UP_SECONDS = 1;
   }

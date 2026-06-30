@@ -31,8 +31,16 @@ public class CANFuelSubsystem extends SubsystemBase {
   private final SparkMax feeder;
   private final SparkClosedLoopController feederController;
 
+  private static CANFuelSubsystem can;
+
+  private double intakeRollerScalar;
+  private double intakFeederScalar;
+
+  private double ejectRollerScalar;
+  private double ejectFeederScalar;
+
   /** Creates a new CANBallSubsystem. */
-  public CANFuelSubsystem() {
+  private CANFuelSubsystem() {
     // create brushed motors for each of the motors on the launcher mechanism
     intakeLauncherLeader = new TalonFX(FOLLOWER_MOTOR_ID);
     intakeLauncherFollower = new TalonFX(INTAKE_LAUNCHER_MOTOR_ID);
@@ -71,7 +79,7 @@ public class CANFuelSubsystem extends SubsystemBase {
     launcherConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     launcherConfig.CurrentLimits.SupplyCurrentLimit = LAUNCHER_MOTOR_CURRENT_LIMIT;
     Slot0Configs slot0Configs = new Slot0Configs();
-    slot0Configs.kP = 0;
+    slot0Configs.kP = 0.5;
     slot0Configs.kI = 0.0;
     slot0Configs.kD = 0.0;
     slot0Configs.kV = 0.052;
@@ -80,25 +88,26 @@ public class CANFuelSubsystem extends SubsystemBase {
     intakeLauncherLeader.getConfigurator().apply(slot0Configs);
     intakeLauncherFollower.getConfigurator().apply(slot0Configs);
     intakeLauncherFollower.setControl(new Follower(FOLLOWER_MOTOR_ID, MotorAlignmentValue.Opposed));
+
+    intakFeederScalar = 1;
+    intakeRollerScalar = 1;
+
+    ejectRollerScalar = 1;
+    ejectFeederScalar = 1;
   }
 
   public void intake() {
     feeder.setVoltage(
-        8 * SmartDashboard.getNumber("Intaking feeder roller value", INTAKING_FEEDER_VELOCITY));
-    intakeLauncherLeader.setControl(
-        new VelocityVoltage(
-                SmartDashboard.getNumber("Intaking intake roller value", INTAKING_INTAKE_VELOCITY))
-            .withSlot(0));
+        8
+            * SmartDashboard.getNumber("Intaking feeder roller value", INTAKING_FEEDER_VELOCITY)
+            * intakFeederScalar);
+    intakeLauncherLeader.setVoltage(6);
   }
   // A method to set the rollers to values for ejecting fuel out the intake. Uses
   // the same values as intaking, but in the opposite direction.
   public void eject() {
-    feeder.setVoltage(-6);
-    intakeLauncherLeader.setControl(
-        new VelocityVoltage(
-                -SmartDashboard.getNumber("Intaking intake roller value", INTAKING_INTAKE_VELOCITY))
-            .withSlot(0));
-    intakeLauncherFollower.setControl(new StrictFollower(FOLLOWER_MOTOR_ID));
+    feeder.setVoltage(-4 * ejectFeederScalar);
+    intakeLauncherLeader.setVoltage(-5);
     // intakeLauncherLeader.setControl(new VelocityVoltage(-1 * SmartDashboard.getNumber("Intaking
     // launcher roller value", INTAKING_INTAKE_VELOCITY)).withSlot(0));
   }
@@ -106,7 +115,7 @@ public class CANFuelSubsystem extends SubsystemBase {
   // A method to set the rollers to values for launching.
   public void launch() {
     feeder.setVoltage(
-        -6.0
+        -3.0
             * SmartDashboard.getNumber("Launching feeder roller value", LAUNCHING_FEEDER_VELOCITY));
     intakeLauncherLeader.setControl(
         new VelocityVoltage(
@@ -156,5 +165,60 @@ public class CANFuelSubsystem extends SubsystemBase {
     // feederController.setSetpoint(setPoint, ControlType.kVelocity);
 
     // This method will be called once per scheduler run
+  }
+
+  public Command feederIntakeScalarCommand(double num) {
+    return this.run(() -> feederIntakeScalar(num));
+  }
+
+  public Command rollerIntakeScalarCommand(double num) {
+    return this.run(() -> rollerIntakeScalar(num));
+  }
+
+  public Command feederEjectScalarCommand(double num) {
+    return this.run(() -> feederEjectScalar(num));
+  }
+
+  public Command rollerEjectScalarCommand(double num) {
+    return this.run(() -> rollerEjectScalar(num));
+  }
+
+  public void feederIntakeScalar(double num) {
+    intakFeederScalar = intakFeederScalar * num;
+  }
+
+  public void rollerIntakeScalar(double num) {
+    intakeRollerScalar = intakeRollerScalar * num;
+  }
+
+  public void feederEjectScalar(double num) {
+    ejectFeederScalar = ejectFeederScalar * num;
+  }
+
+  public void rollerEjectScalar(double num) {
+    ejectRollerScalar = ejectRollerScalar * num;
+  }
+
+  public void IntakeFeeder() {
+    System.out.println("the intake feeder scalar is:" + intakFeederScalar);
+  }
+
+  public void IntakeRoller() {
+    System.out.println("the intake roller scalar is:" + intakeRollerScalar);
+  }
+
+  public void ejectFeeder() {
+    System.out.println("the eject feeder scalar is:" + ejectFeederScalar);
+  }
+
+  public void ejectRoller() {
+    System.out.println("the eject roller scalar is:" + ejectRollerScalar);
+  }
+
+  public static CANFuelSubsystem getInstance() {
+    if (can == null) {
+      can = new CANFuelSubsystem();
+    }
+    return can;
   }
 }

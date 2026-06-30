@@ -39,11 +39,13 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
 
-  private final CANFuelSubsystem ballSubsystem = new CANFuelSubsystem();
+  private final CANFuelSubsystem ballSubsystem = CANFuelSubsystem.getInstance();
 
   // The driver's controller
   private final CommandXboxController Controller =
       new CommandXboxController(DRIVER_CONTROLLER_PORT);
+
+  private final CommandXboxController yhavController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -166,6 +168,38 @@ public class RobotContainer {
     // the intake
     Controller.a()
         .whileTrue(ballSubsystem.runEnd(() -> ballSubsystem.eject(), () -> ballSubsystem.stop()));
+
+    yhavController
+        .a()
+        .onTrue(ballSubsystem.run(() -> ballSubsystem.feederIntakeScalarCommand(0.9)));
+
+    yhavController
+        .povDown()
+        .onTrue(ballSubsystem.run(() -> ballSubsystem.feederEjectScalarCommand(0.9)));
+
+    yhavController
+        .x()
+        .onTrue(ballSubsystem.run(() -> ballSubsystem.rollerIntakeScalarCommand(0.9)));
+
+    yhavController
+        .povLeft()
+        .onTrue(ballSubsystem.run(() -> ballSubsystem.rollerEjectScalarCommand(0.9)));
+
+    yhavController
+        .y()
+        .onTrue(ballSubsystem.run(() -> ballSubsystem.feederIntakeScalarCommand(1.1)));
+
+    yhavController
+        .povUp()
+        .onTrue(ballSubsystem.run(() -> ballSubsystem.feederEjectScalarCommand(1.1)));
+
+    yhavController
+        .b()
+        .onTrue(ballSubsystem.run(() -> ballSubsystem.rollerIntakeScalarCommand(1.1)));
+
+    yhavController
+        .povRight()
+        .onTrue(ballSubsystem.run(() -> ballSubsystem.rollerEjectScalarCommand(1.1)));
   }
 
   /**

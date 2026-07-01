@@ -23,7 +23,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CANFuelSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
-import frc.robot.subsystems.drive.GyroIONavX;
+import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
@@ -61,7 +61,7 @@ public class RobotContainer {
         // a CANcoder
         drive =
             new Drive(
-                new GyroIONavX(),
+                new GyroIOPigeon2(),
                 new ModuleIOTalonFX(TunerConstants.FrontLeft),
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
@@ -166,8 +166,9 @@ public class RobotContainer {
 
     // While the A button is held on the operator controller, eject fuel back out
     // the intake
-    Controller.a()
-        .whileTrue(ballSubsystem.runEnd(() -> ballSubsystem.eject(), () -> ballSubsystem.stop()));
+    // Controller.a()
+    //     .whileTrue(ballSubsystem.runEnd(() -> ballSubsystem.eject(), () ->
+    // ballSubsystem.stop()));
 
     yhavController
         .a()
